@@ -1,51 +1,17 @@
 package com.authentication_service.authservice.controller;
 
 import com.authentication_service.authservice.dto.*;
-import com.authentication_service.authservice.entity.AuthUserEntity;
 import com.authentication_service.authservice.service.AuthService;
-import com.authentication_service.authservice.util.JWTUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/request/auth")
 public class AuthController {
-    @Autowired
-    private JWTUtil jwtUtil;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthService authService;
-
-    //Generate token
-    @GetMapping("/token")
-    public Map<String, String> generateToken(@RequestParam String email, @RequestParam String role, @RequestParam String firstName, @RequestParam String lastName){
-        String token = jwtUtil.generateToken(email, role, firstName, lastName);
-        return Map.of("token", token);
-    }
-
-    //Validate token and extract claims
-    @GetMapping("/validate")
-    public Map<String, Object> validateToken(@RequestParam String email, @RequestParam String token){
-        boolean isValid = jwtUtil.validateToken(token,email);
-        String role = jwtUtil.extractRole(token);
-        String issuedAt = jwtUtil.extractIssuedAt(token).toString();
-        String expiration = jwtUtil.extractExpiration(token).toString();
-
-        return Map.of(
-                "isValid", isValid,
-                "email", email,
-                "role", role,
-                "issuedAt",issuedAt,
-                "expiration", expiration
-        );
-    }
+    @Autowired private AuthService authService;
 
     //Register new user
     @PostMapping("/signup")
@@ -53,32 +19,22 @@ public class AuthController {
         return Map.of("Message", authService.registerUser(userDTO));
     }
 
-    //Login Existing user and return jwt token
     @PostMapping("/login")
-    public Map<String,Object> login(@RequestBody AuthUserDTO userDTO){
-        return authService.login(userDTO);
+    public ResponseEntity<?> login(@RequestBody AuthUserDTO userDTO) {
+        try {
+            return ResponseEntity.ok(authService.login(userDTO));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
-    //Get current user details
-    @PostMapping("/me")
-    public ResponseEntity<AuthProfileDTO> getProfile(HttpServletRequest request) {
-        // Extract token from the Authorization header
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(403).build(); // Forbidden if no proper header
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> request) {
+        try {
+            return ResponseEntity.ok(authService.refreshTokens(request.get("refreshToken")));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-
-        String token = authHeader.substring(7); // Remove "Bearer " prefix
-
-        // Extract details from token
-        AuthProfileDTO user = new AuthProfileDTO();
-        user.setEmail(jwtUtil.extractEmail(token));
-        user.setRole(jwtUtil.extractRole(token));
-        user.setFirstName(jwtUtil.extractFirstName(token));
-        user.setLastName(jwtUtil.extractLastName(token));
-
-        return ResponseEntity.ok(user);
     }
 
     //Reset password
@@ -87,22 +43,41 @@ public class AuthController {
         return authService.resetPassword(dto);
     }
 
-    //Refresh token
-    @PostMapping("/refresh-token")
-    public ResponseEntity<TokenResponse> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
-        try {
-            String refreshToken = request.getRefreshToken();
-            if (jwtUtil.validateToken(refreshToken, jwtUtil.extractEmail(refreshToken))) {
-                String email = jwtUtil.extractEmail(refreshToken);
+    //Get User Profile Using Email
+    @GetMapping("/customer/getProfile")
+    public ResponseEntity<?> getCustomerProfile(@RequestParam String email) {
+        AuthProfileDTO profile = authService.getCustomerProfile(email);
 
-                String newAccessToken = jwtUtil.generateToken(email);
-                return ResponseEntity.ok(new TokenResponse(newAccessToken));
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TokenResponse("Invalid refresh token"));
+        if (profile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Customer not found or not a valid customer"));
         }
+
+        return ResponseEntity.ok(profile);
     }
 
+    //Get User Profile Using Email
+    @GetMapping("/washer/getProfile")
+    public ResponseEntity<?> getWasherProfile(@RequestParam String email) {
+        AuthProfileDTO profile = authService.getWasherProfile(email);
+
+//        if (profile == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Washer not found or not a valid washer");
+//        }
+
+        return ResponseEntity.ok(profile);
+    }
+
+    //Get User Profile Using Email
+    @GetMapping("/admin/getProfile")
+    public ResponseEntity<?> getAdminProfile(@RequestParam String email) {
+        AuthProfileDTO profile = authService.getAdminProfile(email);
+
+        if (profile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Admin not found or not a valid admin"));
+        }
+
+        return ResponseEntity.ok(profile);
+    }
 }

@@ -1,13 +1,8 @@
 package com.customer_service.customerservices.controller;
 
 import com.customer_service.customerservices.dto.CustomerDTO;
-import com.customer_service.customerservices.dto.UserDTO;
-import com.customer_service.customerservices.entity.CustomerEntity;
-import com.customer_service.customerservices.entity.UserEntity;
-import com.customer_service.customerservices.exceptionhandling.UserNotFoundException;
-import com.customer_service.customerservices.services.CustomerService;
-import com.customer_service.customerservices.services.CustomerServiceImp;
-import jakarta.validation.Valid;
+import com.customer_service.customerservices.exceptionhandling.NotFoundException;
+import com.customer_service.customerservices.services.customer.CustomerServiceImp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/request/customer")
@@ -23,7 +19,7 @@ public class CustomerController {
     @Autowired
     private CustomerServiceImp customerService;
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
 
     //Random
@@ -34,9 +30,10 @@ public class CustomerController {
 
     //Add user
     @PostMapping("/post")
-    public ResponseEntity<CustomerDTO> addUser(@Valid @RequestBody CustomerDTO userDTO){
-        log.info("Received request to save user: {}", userDTO);
-        CustomerDTO savedUser = customerService.createCustomer(userDTO);
+    public ResponseEntity<CustomerDTO> addUser(@RequestParam String email, @RequestBody Map<String,String> requestBody){
+        log.info("Received request to save user for email: {}", email);
+        String profileImage = requestBody.get("profileImage");
+        CustomerDTO savedUser = customerService.addCustomer(email, profileImage);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
@@ -49,24 +46,25 @@ public class CustomerController {
 
     //Get user by id
     @GetMapping("/getBy/{id}")
-    public ResponseEntity<CustomerDTO> getUserById(@PathVariable Long id){
+    public ResponseEntity<CustomerDTO> getUserById(@PathVariable String id){
         log.info("Fetching the user details with id {}", id);
         CustomerDTO userDTO = customerService.getCustomerById(id).orElseThrow(
-                () -> new UserNotFoundException("User with ID "+ id + " Not found!!")
+                () -> new NotFoundException("User with ID "+ id + " Not found!!")
         );
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteBy/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
         log.info("Deleting the user with id {}", id);
         customerService.deleteCustomer(id);
         return new ResponseEntity<>("User successfully deleted!", HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO userDTO){
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable String id, @RequestBody CustomerDTO userDTO){
+        log.info("Updating the customer information with id {}", id);
         return ResponseEntity.ok(customerService.updateCustomer(id,userDTO));
     }
 }

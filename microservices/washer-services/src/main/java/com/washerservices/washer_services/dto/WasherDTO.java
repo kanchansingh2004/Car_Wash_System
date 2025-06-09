@@ -1,13 +1,15 @@
 package com.washerservices.washer_services.dto;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class WasherDTO {
-    private String name;
     private String email;
-    private String password;
+    private String firstName;
+    private String lastName;
+    private String phone;
+    private String address;
+    private String role;
+    private String profileImage;
+    private String userId;
 }

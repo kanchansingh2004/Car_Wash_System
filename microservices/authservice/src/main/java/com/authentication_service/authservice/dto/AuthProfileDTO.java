@@ -7,6 +7,15 @@ public class AuthProfileDTO {
     private String phone;
     private String address;
     private String role;
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getPhone() {
         return phone;

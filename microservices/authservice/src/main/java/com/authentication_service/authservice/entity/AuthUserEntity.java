@@ -39,6 +39,17 @@ public class AuthUserEntity {
     @Column(nullable = false)
     private String address;
 
+//    @Column(nullable = false)
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String getPhone() {
         return phone;
     }

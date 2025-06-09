@@ -6,7 +6,33 @@ public class CustomerDTO {
     private String lastName;
     private String phone;
     private String address;
+    private String role;
     private String profileImage;
+    private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
 
     public String getEmail() {
         return email;
@@ -46,13 +72,5 @@ public class CustomerDTO {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
     }
 }

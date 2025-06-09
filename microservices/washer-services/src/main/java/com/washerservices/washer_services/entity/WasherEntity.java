@@ -14,7 +14,31 @@ public class WasherEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    //Not null first name
+    @Column(nullable = false)
+    private String firstName;
+
+    //Not null second name
+    @Column(nullable = false)
+    private String lastName;
+
+    //Not null role
+    @Column(nullable = false)
+    private String role;
+
+    //Unique email for login
+    @Column(unique = true, nullable = false)
     private String email;
-    private String password;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
+    private String profileImage;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false, length = 100)
+    private String userId;
 }

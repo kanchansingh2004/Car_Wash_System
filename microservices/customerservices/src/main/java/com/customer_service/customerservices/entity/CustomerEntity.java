@@ -9,14 +9,59 @@ import lombok.Setter;
 public class CustomerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    private String email;
+    //Not null first name
+    @Column(nullable = false)
     private String firstName;
+
+    //Not null second name
+    @Column(nullable = false)
     private String lastName;
+
+    //Not null role
+    @Column(nullable = false)
+    private String role;
+
+    //Unique email for login
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
     private String phone;
-    private String address;
+
+    @Column(nullable = false)
     private String profileImage;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false, length = 100)
+    private String userId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getEmail() {
         return email;

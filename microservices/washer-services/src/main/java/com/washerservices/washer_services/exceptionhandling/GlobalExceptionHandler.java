@@ -7,8 +7,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(WasherNotFoundException.class)
-    public ResponseEntity<String> handleWasherNotFoundException(WasherNotFoundException ex){
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlreadyPresentException.class)
+    public ResponseEntity<String> handleAlreadyPresentException(AlreadyPresentException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.ALREADY_REPORTED);
     }
 }

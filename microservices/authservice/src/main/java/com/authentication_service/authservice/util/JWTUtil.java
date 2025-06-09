@@ -11,83 +11,63 @@ import java.util.function.Function;
 
 @Component
 public class JWTUtil {
-    // Secret key used for signing the JWT
-    private static final String SECRET = "secret_key_for_jwt_generation_123456789";
+    private static final String SECRET = "your_strong_secret_key_here_256bit+";
+    public static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 60 * 1000; // 1 hour
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-    //Token validity time
-    private static final long EXPIRE_TIME = 60 * 60 * 1000;
-
-    //Generate signing key using HMAC-SHA256
-    private Key getSigningKey(){
+    private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    public String generateToken(String email, String role, String firstName, String lastName) {
+    // Generate access token with claims
+    public String generateAccessToken(String email, String role) {
         return Jwts.builder()
-                .setSubject(email)  // email as subject
-                .addClaims(Map.of(
-                        "role", role,
-                        "firstName", firstName,
-                        "lastName", lastName
-                ))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
+                .setSubject(email)
+                .claim("type", "access")
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    // Generate refresh token (minimal claims)
+    public String generateRefreshToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("type", "refresh")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    //Parse and extract all claims from the token using the secret key
-    private Claims extractAllClaims (String token){
-        return Jwts.parserBuilder().setSigningKey(getSigningKey())
-                .build().parseClaimsJws(token)
-                .getBody();
-    }
-
-    public boolean validateToken(String token, String email){
-        final String extractedEmail = extractEmail((token));
-        return (extractedEmail.equals(email) && !isTokenExpired(token));
-    }
-
-    // Check if token is expired
-    public boolean isTokenExpired(String token) {
+    // Universal token validation
+    public boolean validateToken(String token) {
         try {
-            return extractAllClaims(token).getExpiration().before(new Date());
-        } catch (ExpiredJwtException e) {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
             return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    // Get token type (access/refresh)
+    public String getTokenType(String token) {
+        return extractClaim(token, claims -> claims.get("type", String.class));
     }
 
-    public Boolean extractIssuedAt(String token) {
-        return true;
+    // Generic claim extractor
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claimsResolver.apply(claims);
     }
-
-    public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    public String extractRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public String extractFirstName(String token){
-        return extractAllClaims(token).get("firstName", String.class);
-    }
-
-    public String extractLastName(String token){
-        return extractAllClaims(token).get("lastName", String.class);
-    }
-
-
 }
 

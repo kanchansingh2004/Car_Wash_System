@@ -11,9 +11,27 @@ public class CarDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    private String CarId;
     private String carNumber;
     private String carModel;
-    private List<String> carImages;
+    private String carImages;
+    private String userId;
+
+    public String getCarId() {
+        return CarId;
+    }
+
+    public void setCarId(String carId) {
+        CarId = carId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public Long getId() {
         return id;
@@ -39,11 +57,11 @@ public class CarDetails {
         this.carModel = carModel;
     }
 
-    public List<String> getCarImages() {
+    public String getCarImages() {
         return carImages;
     }
 
-    public void setCarImages(List<String> carImages) {
+    public void setCarImages(String carImages) {
         this.carImages = carImages;
     }
 }

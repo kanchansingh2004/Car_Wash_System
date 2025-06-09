@@ -1,11 +1,27 @@
 package com.customer_service.customerservices.dto;
 
-import java.util.List;
-
 public class CarDetailsDTO {
     private String carNumber;
     private String carModel;
-    private List<String> carImages;
+    private String carImages;
+    private String carId;
+    private String UserId;
+
+    public String getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(String userId) {
+        UserId = userId;
+    }
+
+    public String getCarId() {
+        return carId;
+    }
+
+    public void setCarId(String carId) {
+        this.carId = carId;
+    }
 
     public String getCarNumber() {
         return carNumber;
@@ -23,11 +39,11 @@ public class CarDetailsDTO {
         this.carModel = carModel;
     }
 
-    public List<String> getCarImages() {
+    public String getCarImages() {
         return carImages;
     }
 
-    public void setCarImages(List<String> carImages) {
+    public void setCarImages(String carImages) {
         this.carImages = carImages;
     }
 }
