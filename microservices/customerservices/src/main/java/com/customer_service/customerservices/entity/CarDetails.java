@@ -12,10 +12,17 @@ public class CarDetails {
     Long id;
 
     private String CarId;
+    @Column(nullable = false, unique = true)
     private String carNumber;
+
+    @Column(nullable = false)
     private String carModel;
+
     private String carImages;
+
+    @Column(nullable = false)
     private String userId;
+
 
     public String getCarId() {
         return CarId;

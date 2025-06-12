@@ -15,10 +15,17 @@ public class WasherReviewEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String washerId;
+
+    @Column(nullable = false)
     private String customerId;
+
     private String comment;
+
+    @Column(nullable = false)
     private int rating;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 }

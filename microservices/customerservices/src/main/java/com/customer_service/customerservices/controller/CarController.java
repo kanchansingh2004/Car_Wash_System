@@ -2,6 +2,7 @@ package com.customer_service.customerservices.controller;
 
 import com.customer_service.customerservices.dto.CarDetailsDTO;
 import com.customer_service.customerservices.services.carservice.CarService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class CarController {
 
     // Add Car Details
     @PostMapping("/addCar")
-    public ResponseEntity<Map<String, String>> addCar(@RequestBody CarDetailsDTO dto, @RequestParam String userId) {
+    public ResponseEntity<Map<String, String>> addCar(@Valid @RequestBody CarDetailsDTO dto, @RequestParam String userId) {
         LOGGER.info("Received request to add car: " + dto.getCarNumber());
         return ResponseEntity.ok(carService.addCarDetails(dto,userId));
     }
@@ -55,7 +56,7 @@ public class CarController {
 
     // Update Car Details
     @PutMapping("/updateCar/{carNumber}")
-    public ResponseEntity<CarDetailsDTO> updateCarDetails(@RequestBody CarDetailsDTO dto,
+    public ResponseEntity<CarDetailsDTO> updateCarDetails(@Valid @RequestBody CarDetailsDTO dto,
                                                           @PathVariable String carNumber) {
         LOGGER.info("Received request to update car: " + carNumber);
         CarDetailsDTO updated = carService.updateDetails(dto, carNumber);

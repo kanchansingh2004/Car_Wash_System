@@ -1,12 +1,37 @@
 package com.authentication_service.authservice.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 public class AuthProfileDTO {
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "First name is required")
+    @Pattern(regexp = "^[A-Z][a-z]{1,}$", message = "First name must start with capital and have at least 2 letters")
     private String firstName;
+
+    @NotBlank(message = "Last name is required")
+    @Pattern(regexp = "^[A-Z][a-z]{1,}$", message = "Last name must start with capital and have at least 2 letters")
     private String lastName;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
     private String phone;
+
+    @NotBlank(message = "Address is required")
     private String address;
+
+    @NotBlank(message = "Role is required")
     private String role;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
+
     private String userId;
 
     public String getUserId() {

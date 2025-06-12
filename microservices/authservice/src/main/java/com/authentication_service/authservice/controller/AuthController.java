@@ -2,6 +2,7 @@ package com.authentication_service.authservice.controller;
 
 import com.authentication_service.authservice.dto.*;
 import com.authentication_service.authservice.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,12 @@ public class AuthController {
 
     //Register new user
     @PostMapping("/signup")
-    public Map<String, String> registerUser(@RequestBody SignupRequest userDTO){
+    public Map<String, String> registerUser(@Valid @RequestBody SignupRequest userDTO){
         return Map.of("Message", authService.registerUser(userDTO));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthUserDTO userDTO) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthUserDTO userDTO) {
         try {
             return ResponseEntity.ok(authService.login(userDTO));
         } catch (RuntimeException e) {
@@ -39,7 +40,7 @@ public class AuthController {
 
     //Reset password
     @PutMapping("/resetPassword")
-    public Map<String,String> resetPassword(@RequestBody AuthUserDTO dto){
+    public Map<String,String> resetPassword(@Valid @RequestBody AuthUserDTO dto){
         return authService.resetPassword(dto);
     }
 

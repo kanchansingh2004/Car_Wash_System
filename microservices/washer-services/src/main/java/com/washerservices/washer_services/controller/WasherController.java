@@ -6,6 +6,7 @@ import com.washerservices.washer_services.dto.WashRequestDTO;
 import com.washerservices.washer_services.dto.WasherDTO;
 import com.washerservices.washer_services.exceptionhandling.NotFoundException;
 import com.washerservices.washer_services.services.washer.WasherServicesImp;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class WasherController {
 
     //Update washer profile
     @PutMapping("/update/{id}")
-    public ResponseEntity<UpdateProfileDTO> updateCustomer(@PathVariable String id, @RequestBody UpdateProfileDTO userDTO){
+    public ResponseEntity<UpdateProfileDTO> updateCustomer(@PathVariable String id, @Valid @RequestBody UpdateProfileDTO userDTO){
         log.info("Received update request for washer ID: {}", id);
         UpdateProfileDTO updated = washerServices.updateWasher(id, userDTO);
         log.info("Successfully updated washer profile for ID: {}", id);

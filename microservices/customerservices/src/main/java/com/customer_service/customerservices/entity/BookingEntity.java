@@ -12,19 +12,43 @@ public class BookingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
 
+    @Column(nullable = false, unique = true)
     private String userBookingId;
+
+    @Column(nullable = false)
     private String userId;
+
     private String washerId;
+
+    @Column(nullable = false)
     private String carId;
+
+    @Column(nullable = false)
     private String customerName;
+
+    @Column(nullable = false)
     private String customerEmail;
+
+    @Column(nullable = false)
     private String washPackage;
+
     private String addOns;
+
     private String notes;
+
+    @Column(nullable = false)
     private String washAddress;
+
+    @Column(nullable = false)
     private LocalDate washDate;
+
+    @Column(nullable = false)
     private LocalTime washTime;
+
+    @Column(nullable = false)
     private LocalDateTime bookingTime;
+
+    @Column(nullable = false)
     private String bookingStatus; // PENDING, CONFIRMED, COMPLETED
 
 

@@ -1,9 +1,5 @@
 package com.customer_service.customerservices.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 public class WasherBookingPayloadDTO {
     private BookingDTO booking;
     private CarDetailsDTO car;
@@ -12,6 +8,4 @@ public class WasherBookingPayloadDTO {
         this.booking = booking;
         this.car = car;
     }
-
-
 }
